@@ -1082,12 +1082,6 @@ setwd("Experimental_Raw_data")
       tiff(filename = "Result/Contextual_Fear_Extinction_Day2_box.tiff", width = 4 * 900, height = 4 * 900, res = 900)
       gEx2box
       dev.off()
-
-
-      
-      
-      
-      
       
 # Experiment 2 ========================================================================================
   # Auditory Fear Conditioning ----
@@ -1256,10 +1250,6 @@ setwd("Experimental_Raw_data")
         tiff(filename = "Result/Auditory_Extinction_Day2_boxplot.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
         modGcueEx2
         dev.off()
-        
-        
-        
-        
         
 # Experiment 3 =========================================================================================
   # Contextual Fear Conditioning ----
@@ -1436,11 +1426,6 @@ setwd("Experimental_Raw_data")
         modGANAEx2box
         dev.off()
         
-
-
-        
-        
-        
 # Experiment 4 =========================================================================================
   # Create data sets ----
         ANABDNF <- read.csv("ANA_BDNF.csv") %>% 
@@ -1549,8 +1534,6 @@ setwd("Experimental_Raw_data")
         modGANApCREB
         dev.off()
 
-        
-        
 # Supplemental Experiment =============================================================================
   # Contextual Fear Conditioning ----
     # Create data sets & Plots ----
