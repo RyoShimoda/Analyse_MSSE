@@ -1,4 +1,3 @@
-# For GitHub
 # Analyzing for MSSE
 
 library(dplyr)
@@ -17,7 +16,7 @@ windowsFonts("TNR" = windowsFont("Times New Roman"))
 
 # Downloads 
 source("anovakun_489.txt")
-source("AUTOPLOT.txt")
+source("AUTOGRAPH.txt")
 
 # My_Function----
 mf_plotANA <- function(dataset, datajitter = NA, day, time = "per1", graph, color = ""){
@@ -1127,7 +1126,7 @@ setwd("Experimental_Raw_data")
           gather(key = Group, val = Freezing, na.rm = TRUE) %>% 
           mutate(Group = dplyr::recode(Group, "MIE" = "LIE"))
       
-        cueEx1_per3 <- read.csv("D:\\Soya_lab\\Paper\\Datasets\\cue_Ex1_tone.csv") %>%
+        cueEx1_per3 <- read.csv(".\\Datasets\\cue_Ex1_tone.csv") %>%
           dplyr::slice(-1) %>% 
           gather(key = Group, val = Freezing, -1, na.rm = TRUE) %>% 
           mutate(row = row_number()) %>% 
@@ -1193,7 +1192,7 @@ setwd("Experimental_Raw_data")
           gather(key = Group, val = Freezing, na.rm = TRUE) %>% 
           mutate(Group = dplyr::recode(Group, "MIE" = "LIE"))
         
-        cueEx2_per3 <- read.csv("D:\\Soya_lab\\Paper\\Datasets\\cue_Ex2_tone.csv") %>%
+        cueEx2_per3 <- read.csv(".\\Datasets\\cue_Ex2_tone.csv") %>%
           dplyr::slice(-1) %>% 
           gather(key = Group, val = Freezing, -1, na.rm = TRUE) %>% 
           mutate(row = row_number()) %>% 
@@ -1305,7 +1304,7 @@ setwd("Experimental_Raw_data")
                                               "MIE...Sal" = "LIE_Sal", 
                                               "MIE...ANA" = "LIE_ANA"))
         
-        ANAEx1per3 <- read.csv("D:\\Soya_lab\\Paper\\Datasets\\ANA_Ex1_1min.csv") %>% 
+        ANAEx1per3 <- read.csv(".\\Datasets\\ANA_Ex1_1min.csv") %>% 
           gather(key = Group, val = Freezing, -1) %>% 
           mutate(row = row_number()) %>% 
           mutate(Group = if_else(row <= 105, "SED_Sal", if_else(row <= 210, "LIE_Sal", "LIE_ANA"))) %>% 
@@ -1372,7 +1371,7 @@ setwd("Experimental_Raw_data")
                                        "MIE...Sal" = "LIE_Sal", 
                                        "MIE...ANA" = "LIE_ANA"))
         
-        ANAEx2per3 <- read.csv("D:\\Soya_lab\\Paper\\Datasets\\ANA_Ex2_1min.csv") %>% 
+        ANAEx2per3 <- read.csv(".\\Datasets\\ANA_Ex2_1min.csv") %>% 
           gather(key = Group, val = Freezing, -1) %>% 
           mutate(row = row_number()) %>% 
           mutate(Group = if_else(row <= 105, "SED_Sal", if_else(row <= 210, "LIE_Sal", "LIE_ANA"))) %>% 
