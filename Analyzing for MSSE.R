@@ -11,9 +11,11 @@ library(exactRankTests)
 # For Levene Test
 library(car)
 library(effsize)
-# 
+
+# Windows Font
 windowsFonts("TNR" = windowsFont("Times New Roman"))
 
+# Downloads 
 source("anovakun_489.txt")
 source("AUTOGRAPH_ver4.txt")
 
