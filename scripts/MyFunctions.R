@@ -45,8 +45,7 @@ mf_plotANA <- function(dataset, datajitter = NA, day, time = "per1", graph, colo
             axis.line = element_line(colour = "black"),
             axis.title = element_text(size = 20))
     plot(g)
-    # ggsave(filename = "Result/ANA???|???½¿?½½??½¿?½½??½¿?½½??½¿?½½t??.png", width = 3.5, height = 3, dpi = 300)
-  }
+      }
   else if(graph == "bar"){
     sumExb <- dataset %>% 
       group_by(Group) %>% 
