@@ -37,7 +37,7 @@ mf_plotANA <- function(dataset, datajitter = NA, day, time = "per1", graph, colo
       scale_x_continuous(limits = c(1, 6), breaks = c(1, 2, 3, 4, 5, 6)) +
       theme_classic(base_family = "TNR") +
       theme(plot.title = element_text(size = 18, hjust = 0.5),
-            # legend.position = c(.27, .8),
+            legend.position = c(.27, .8),
             legend.key = element_blank(), 
             legend.title = element_blank(),
             legend.text = element_text(size = 16),
