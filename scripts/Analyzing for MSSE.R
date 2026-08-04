@@ -15,9 +15,9 @@ library(effsize)
 windowsFonts("TNR" = windowsFont("Times New Roman"))
 
 # Downloads 
-source("anovakun_489.txt")
-source("AUTOGRAPH.txt")
-source("MyFunctions.txt")
+source("scripts/anovakun_489.txt")
+source("scripts/AUTOGRAPH.txt")
+source("scripts/MyFunctions.txt")
 
 # Experiment 1 =======================================================================================
   # Contextual Fear Conditioning ----
@@ -55,9 +55,6 @@ source("MyFunctions.txt")
     tiff(filename = "Results/Contextual_Fear_Conditioning.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
     gFC
     dev.off()
-
-    
-    
     
   # Contextual Fear Extinction ----
     # Extinction day 1 ----
@@ -258,7 +255,7 @@ source("MyFunctions.txt")
           gather(key = Group, val = Freezing, na.rm = TRUE) %>% 
           mutate(Group = dplyr::recode(Group, "MIE" = "LIE"))
       
-        cueEx1_per3 <- read.csv(".\\Datasets\\cue_Ex1_tone.csv") %>%
+        cueEx1_per3 <- read.csv("cue_Ex1_tone.csv") %>%
           dplyr::slice(-1) %>% 
           gather(key = Group, val = Freezing, -1, na.rm = TRUE) %>% 
           mutate(row = row_number()) %>% 
@@ -324,7 +321,7 @@ source("MyFunctions.txt")
           gather(key = Group, val = Freezing, na.rm = TRUE) %>% 
           mutate(Group = dplyr::recode(Group, "MIE" = "LIE"))
         
-        cueEx2_per3 <- read.csv(".\\Datasets\\cue_Ex2_tone.csv") %>%
+        cueEx2_per3 <- read.csv("cue_Ex2_tone.csv") %>%
           dplyr::slice(-1) %>% 
           gather(key = Group, val = Freezing, -1, na.rm = TRUE) %>% 
           mutate(row = row_number()) %>% 
