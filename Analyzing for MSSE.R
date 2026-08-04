@@ -17,7 +17,7 @@ windowsFonts("TNR" = windowsFont("Times New Roman"))
 
 # Downloads 
 source("anovakun_489.txt")
-source("AUTOGRAPH_ver4.txt")
+source("AUTOPLOT.txt")
 
 # My_Function----
 mf_plotANA <- function(dataset, datajitter = NA, day, time = "per1", graph, color = ""){
@@ -1539,7 +1539,7 @@ setwd("Experimental_Raw_data")
 # Supplemental Experiment =============================================================================
   # Contextual Fear Conditioning ----
     # Create data sets & Plots ----
-          mf_autoplot_ver4(folder_name = "ANAsedentary", experiment_type = "FC", 
+          mf_autograph(folder_name = "ANAsedentary", experiment_type = "FC", 
                         path = "./ANAsedentary/FC", color = "mono")
           
           modsupGFC <- GFC + 
@@ -1564,7 +1564,7 @@ setwd("Experimental_Raw_data")
   # Contextual Fear Extinction ----
     # Extinction day 1 ----
       # Create data sets & Plots ----
-          mf_autoplot_ver4(folder_name = "ANAsedentary", experiment_type = "Ex1", 
+          mf_autograph(folder_name = "ANAsedentary", experiment_type = "Ex1", 
                            path = "./ANAsedentary/Ex1", legend_position_Ex = "none",
                            color = "mono", jitter_fill_color = "white", 
                            axis_text_size = 20, axis_title_size = 20,
@@ -1614,7 +1614,7 @@ setwd("Experimental_Raw_data")
 
     # Extinction day 2 ----
       # Create data sets & Plots ----
-          mf_autoplot_ver4(folder_name = "ANAsedentary", experiment_type = "Ex2", 
+          mf_autograph(folder_name = "ANAsedentary", experiment_type = "Ex2", 
                            path = "./ANAsedentary/Ex2", legend_position_Ex = "none",
                            color = "mono", jitter_fill_color = "white",
                            axis_text_size = 20, axis_title_size = 20,
