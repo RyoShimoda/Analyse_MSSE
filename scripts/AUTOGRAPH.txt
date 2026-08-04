@@ -1,0 +1,1098 @@
+#AUTOGRAPH for per 30 seconds
+mf_autograph <- function(folder_name = "", experiment_type, path, file_type = "xls", color = "",
+                             Font_family = "Times New Roman", graphic_refference = "SED", plot_number = "",
+                             title_FC = "Fear Conditioning", title_Ex1 = "Extinction Day 1", title_Ex2 = "Extinction Day 2",
+                             line_size = .8, errobar_width = .2, 
+                             point_size = 5, point_shape = 21,
+                             title_size = 18, title_position = .5,
+                             legend_position_FC = c(.2, .8), legend_position_Ex = c(.2, .25), legend_text_size = 16,
+                             axis_text_size = 16, axis_text_size_bar = 20, axis_text_half = 14,
+                             axis_title_size = 18, axis_text_color = "black", axis_line_color = "black",
+                             xlab_time = "Time (min)", xlab_time_half = "Time (per 7.5 min)",
+                             xlab_time_per5 = "Time (per 5 min)", xlab_time_per3 = "Time (per 3 min)",
+                             ylab_freezing_time = "Freezing Time (%)",
+                             limits_x_FC = c(1, 6), limits_y = c(0, 100), limits_y_bar = c(0, 100), limits_x_Ex_individual = c(1, 15),
+                             breaks_x_FC = c(1, 2, 3, 4, 5, 6), breaks_x_Ex_individual = c(1, 3, 6, 9, 12, 15),
+                             breaks_y = c(0, 20, 40, 60, 80, 100),
+                             SED = "SED", LIE = "LIE", MOE = "MOE", NCS = "NCS", ANA = "ANA",
+                             color_SED = "grey85", color_LIE = "skyblue", color_MOE = "lightgreen", color_NCS = "goldenrod", color_ANA = "steelblue",
+                             mono_SED = "white", mono_LIE = "grey85", mono_MOE = "black", mono_NCS = "black", mono_ANA = "black",
+                             First_half = "First\n7.5 min", Latter_half = "Latter\n7.5 min", 
+                             jitter_fill_color = "black", jitter_fill_color_box = "white", jitter_surrounding_color = "black",
+                             jitter_shape = 21, jitter_height = 0, jitter_height_half = 0, jitter_width = .1, jitter_width_half = .2,
+                             jitter_size = 3, jitter_size_half = 2, jitter_size_boxplot = 2, jitter_alpha = .7, 
+                             barplot_posision = 'dodge', barplot_surrounding_color = "black", barplot_width = .7, barplot_width_half = .8, 
+                             boxplot_surrounding_color = "black", boxplot_width = .5, boxplot_symbol = "mean",
+                             boxplot_symbol_shape = 23, boxplot_symbol_size = 4, boxplot_symbol_fill = "white", 
+                             individual_point_size = 2.5, individual_line_size = 1, 
+                             individual_plot_width = 6, individual_plot_height = 4.8,
+                             Result_folder = "Results", Plot_folder = "Plots", Mono_folder = "MONO", Individual_folder = "Individual_data",
+                             save_plot_width = 3, save_lineplot_width = 3.5, save_plot_height = 3, save_plot_dpi = 300,
+                             Export_type = "", Export_name = "Result_Summary"
+){
+  library(dplyr)
+  library(tidyr)
+  library(stringr)
+  library(readxl)
+  library(ggplot2)
+  
+  #Times New Roman
+  windowsFonts("TNR" = windowsFont("Times New Roman"))
+  #Meiryo
+  windowsFonts("MEI" = windowsFont("Meiryo"))
+  
+  #Create Result Folder
+  dir.create(paste0(folder_name, "/", Result_folder), showWarnings = F)
+  dir.create(paste0(folder_name, "/",Result_folder ,"/", Plot_folder), showWarnings = F)
+  
+  if(color == ""){
+    colour_SED = color_SED
+    colour_LIE = color_LIE
+    colour_MOE = color_MOE
+    colour_NCS = color_NCS
+    colour_ANA = color_ANA
+    
+    Mono_dir = ""
+  }
+  else if(color == "mono"){
+    dir.create(paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", Mono_folder), showWarnings = F)
+    colour_SED = mono_SED
+    colour_LIE = mono_LIE
+    colour_MOE = mono_MOE
+    colour_NCS = mono_NCS
+    colour_ANA = mono_ANA
+    
+    Mono_dir = paste0(Mono_folder, "/")
+  }
+  
+  
+  #Theme----
+  if(Font_family == "Times New Roman"){
+    Font = "TNR"
+  }
+  else if(Font_family == "Meiryo"){
+    Font = "MEI"
+  }
+  theme_FC <- function(){
+      theme_classic(base_family = Font) +
+        theme(plot.title = element_text(size = title_size, hjust = title_position),
+              legend.position = legend_position_FC,
+              legend.key = element_blank(),
+              legend.title = element_blank(),
+              legend.text = element_text(size = legend_text_size),
+              axis.text = element_text(size = axis_text_size, colour = axis_text_color),
+              axis.line = element_line(colour = axis_line_color),
+              axis.title = element_text(size = axis_title_size))
+  }
+  theme_bar <- function(){
+      theme_classic(base_family = Font) +
+        theme(plot.title = element_text(size = title_size, hjust = title_position),
+              legend.position = "none",
+              axis.text.x = element_text(size = axis_text_size_bar, colour = axis_text_color),
+              axis.text.y = element_text(size = axis_text_size, colour = axis_text_color),
+              axis.line = element_line(colour = axis_line_color),
+              axis.title.x = element_blank(),
+              axis.title.y = element_text(size = axis_title_size)) 
+  }
+  theme_line <- function(){
+      theme_classic(base_family = Font) +
+        theme(plot.title = element_text(size = title_size, hjust = title_position),
+              legend.position = legend_position_Ex,
+              legend.key = element_blank(),
+              legend.title = element_blank(),
+              legend.text = element_text(size = legend_text_size),
+              axis.text = element_text(size = axis_text_size, colour = axis_text_color),
+              axis.line = element_line(colour = axis_line_color),
+              axis.title = element_text(size = axis_title_size))
+  }
+  theme_box <- function(){
+      theme_classic(base_family = Font) +
+        theme(plot.title = element_text(size = title_size, hjust = title_position),
+              legend.position = "none",
+              axis.text.x = element_text(size = axis_text_size_bar, colour = axis_text_color),
+              axis.text.y = element_text(size = axis_text_size, colour = axis_text_color),
+              axis.line = element_line(colour = axis_line_color),
+              axis.title.x = element_blank(),
+              axis.title.y = element_text(size = axis_title_size))
+  }
+  theme_half <- function(){
+      theme_classic(base_family = Font) +
+        theme(plot.title = element_text(size = title_size, hjust = title_position),
+              legend.position = "none",
+              axis.text.x = element_text(size = axis_text_half, colour = axis_text_color),
+              axis.text.y = element_text(size = axis_text_size, colour = axis_text_color),
+              axis.line = element_line(colour = axis_line_color),
+              axis.title.x = element_blank(),
+              axis.title.y = element_text(size = axis_title_size))
+  }
+  theme_FC_Individual <- function(){
+      theme_classic(base_family = Font) +
+        theme(legend.position = 'none',
+              plot.title = element_text(size = 10, hjust = .5),
+              axis.text = element_text(size = 10, colour = "black"),
+              axis.line = element_line(colour = "black"),
+              axis.title = element_text(size = 10))
+  }
+  theme_Ex_Individual <- function(){
+      theme_classic(base_family = Font) +
+        theme(legend.position = 'none',
+              plot.title = element_text(size = 10, hjust = .5),
+              axis.text = element_text(size = 10, colour = "black"),
+              axis.line = element_line(colour = "black"),
+              axis.title = element_text(size = 10))
+  }
+  
+  #My Function Plot Save----
+  mf_plotsave <- function(dataset, datajitter = NA, day = "", time = "", graph, color = ""){
+    if(graph == "FC"){
+        graphname = graph
+        
+        #Create Plot Data set
+        sumFC <- dataset %>%
+          group_by(Group, Time) %>%
+          summarise(meanFreezing = mean(Freezing),    
+                    seFreezing = sd(Freezing)/sqrt(n()-1)) %>%
+          mutate(Group = as.factor(Group)) %>%
+          mutate(Group = relevel(Group, ref = graphic_refference))
+        
+        #Create Plot
+        g <- ggplot(sumFC, aes(x = Time, y = meanFreezing, group = Group, fill = Group)) +
+          geom_line(size = line_size) +
+          geom_errorbar(aes(ymin = meanFreezing - seFreezing,
+                            ymax = meanFreezing + seFreezing),
+                        width = errobar_width) +
+          geom_point(size = point_size, shape = point_shape) +
+          labs(title = title_FC, x = xlab_time, y = ylab_freezing_time) +
+          scale_y_continuous(limits = limits_y, breaks = breaks_y) +
+          scale_x_continuous(limits = limits_x_FC, breaks = breaks_x_FC) +
+          scale_fill_manual(values = c(SED = colour_SED, LIE = colour_LIE, MOE = colour_MOE, NCS = colour_NCS, `ANA-12` = colour_ANA)) +
+          theme_FC()
+        
+        plot(g)
+        
+        #Export to pptx or docx
+        if(Export_type == "pptx"){
+          graph2ppt(g, folder_name = paste0(folder_name, "/", Result_folder, "/", Export_name, ".pptx"), 
+                    width = save_lineplot_width, height = save_plot_height, append = TRUE)
+        }
+        else if(Export_type == "docx"){
+          graph2doc(g, folder_name = paste0(folder_name, "/", Result_folder, "/", Export_name, ".docx"), 
+                    width = save_lineplot_width, height = save_plot_height,append = TRUE)
+        }
+        
+        #Save
+        ggsave(filename = paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", Mono_dir, "Fear Conditioning", plot_number, ".png"), 
+                width = save_lineplot_width, height = save_plot_height, dpi = save_plot_dpi)
+      }
+    else if(graph == "bar"){
+        #Create Plot Data set
+        sumExb <- dataset %>% 
+          group_by(Group) %>% 
+          summarise(mean = mean(Freezing),
+                    se = sd(Freezing)/sqrt(n()-1)) %>%
+          mutate(Group = as.factor(Group)) %>%
+          mutate(Group = relevel(Group, ref = graphic_refference))
+        graphname = paste0(day, graph)
+        
+        if(day == "Ex1"){
+          titlename = title_Ex1
+        }
+        else if (day == "Ex2"){
+          titlename = title_Ex2
+        }
+        name = paste0(titlename, " ", graph, "plot")
+        
+        #Create Plot
+        g <- ggplot(sumExb, aes(x = Group, y = mean, fill = Group)) +
+          geom_bar(stat = 'identity', position = barplot_posision, width = barplot_width, colour = barplot_surrounding_color) + 
+          geom_errorbar(aes(ymin = mean - se,
+                            ymax = mean + se),
+                        width = errobar_width) +
+          geom_jitter(data = datajitter, aes(x = Group, y = mean),
+                      height = jitter_height, width = jitter_width, size = jitter_size, alpha = jitter_alpha,
+                      fill = jitter_fill_color, color = jitter_surrounding_color, shape = jitter_shape) +
+          labs(title = titlename, y = ylab_freezing_time) +
+          scale_y_continuous(expand = c(0, 0),limits = limits_y_bar, breaks = breaks_y) +
+          scale_x_discrete(labels = c("SED" = SED, "LIE" = LIE, "MOE" = MOE, "NCS" = NCS, "ANA-12" = ANA)) +
+          scale_fill_manual(values = c(SED = colour_SED, LIE = colour_LIE, MOE = colour_MOE, NCS = colour_NCS, `ANA-12` = colour_ANA)) +
+          theme_bar()
+        
+        plot(g)
+        
+        #Export to pptx or docx
+        if(Export_type == "pptx"){
+          graph2ppt(g, folder_name = paste0(folder_name, "/", Result_folder, "/", Export_name, ".pptx"), 
+                    width = save_lineplot_width, height = save_plot_height, append = TRUE)
+        }
+        else if(Export_type == "docx"){
+          graph2doc(g, folder_name = paste0(folder_name, "/", Result_folder, "/", Export_name, ".docx"), 
+                    width = save_lineplot_width, height = save_plot_height, append = TRUE)
+        }
+        
+        #Save
+        ggsave(filename = paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", Mono_dir, name, plot_number, ".png"),
+               width = save_plot_width, height = save_plot_height, dpi = save_plot_dpi)
+      }
+    else if(graph == "line"){
+        #Create Plot Data set 
+        sumEx <- dataset %>%
+          group_by(Group, Time) %>% 
+          summarise(mean = mean(Freezing),
+                    se = sd(Freezing)/sqrt(n()-1)) %>%
+          mutate(Group = as.factor(Group)) %>%
+          mutate(Group = relevel(Group, ref = graphic_refference))
+        xlabel = xlab_time
+        
+        if (day == "Ex1"){
+          titlename = title_Ex1
+          name = paste0(title_Ex1, " ", time)
+          if (time == "half"){
+            xlabel = xlab_time_half
+          }
+          else if(time == "per 5"){
+            xlabel = xlab_time_per5
+          }
+          else if(time == "per 3"){
+            xlabel = xlab_time_per3
+          }
+        }
+        else if (day == "Ex2"){
+          titlename = title_Ex2
+          name = paste0(title_Ex2, " ", time)
+          if (time == "half"){
+            xlabel = xlab_time_half
+          }
+          else if (time == "per5"){
+            xlabel = xlab_time_per5
+          }
+          else if (time == "per3"){
+            xlabel = xlab_time_per3
+          }
+        }
+        graphname = paste0(day, time)
+        
+        #Create Plot
+        g <- ggplot(sumEx, aes(x = Time, y = mean, group = Group, fill = Group)) +
+          geom_line(size = line_size) +
+          geom_errorbar(aes(ymin = mean - se,
+                            ymax = mean + se),
+                        width = errobar_width) +
+          geom_point(size = point_size, shape = point_shape) +
+          labs(title = titlename, x = xlabel, y = ylab_freezing_time) +
+          scale_y_continuous(limits = limits_y, breaks = breaks_y) +
+          scale_fill_manual(values = c(SED = colour_SED, LIE = colour_LIE, MOE = colour_MOE, NCS = colour_NCS, `ANA-12` = colour_ANA)) +
+          theme_line()
+        
+        if (time == "half"){
+          g <- g +
+            scale_x_discrete(limits = c(First_half, Latter_half)) +
+            theme(axis.title.x = element_blank())
+        }
+        if (time == "per5"){
+          g <- g +
+            scale_x_discrete(limits = c("5", "10", "15")) +
+            xlab(label = xlab_time_per5)
+        }
+        else if (time == "per3"){
+          g <- g +
+            scale_x_discrete(limits = c("3", "6", "9", "12", "15")) +
+            xlab(label = xlab_time_per3)
+        }
+        else if (time == "") {
+          g <- g +
+            scale_x_continuous(limits = c(1, 15), breaks = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)) +
+            theme(axis.text.x = element_text(size = 11, color = axis_line_color))
+        }
+        
+        plot(g)
+        
+        #Export to pptx or docx
+        if(Export_type == "pptx"){
+          graph2ppt(g, folder_name = paste0(folder_name, "/", Result_folder, "/", Export_name, ".pptx"), 
+                    width = save_lineplot_width, height = save_plot_height, append = TRUE)
+        }
+        else if(Export_type == "docx"){
+          graph2doc(g, folder_name = paste0(folder_name, "/", Result_folder, "/", Export_name, ".docx"), 
+                    width = save_lineplot_width, height = save_plot_height, append = TRUE)
+        }
+        #Save
+        ggsave(filename = paste0(folder_name,"/",Result_folder, "/", Plot_folder, "/", Mono_dir, name, plot_number, ".png"), 
+                width = save_lineplot_width, height = save_plot_height, dpi = save_plot_dpi)
+      }
+    else if(graph == "box"){
+        #Create Plot Data set
+        dataset <- dataset %>% 
+          group_by(Group, No) %>% 
+          summarise(Freezing = mean(Freezing)) %>% 
+          mutate(Group = as.factor(Group)) %>%
+          mutate(Group = relevel(Group, ref = graphic_refference))
+        graphname = paste0(day, graph)
+        
+        if(day == "Ex1"){
+          titlename = title_Ex1
+          name = paste0(title_Ex1," ",graph,"plot")
+        }
+        else if (day == "Ex2"){
+          titlename = title_Ex2
+          name = paste0(title_Ex2," ",graph,"plot")
+        } 
+        
+        #Create Plot
+        g <- ggplot(data = dataset, aes(x = Group, y = Freezing, fill = Group, group = Group)) +
+          stat_boxplot(geom = "errorbar", width = errobar_width) + 
+          geom_boxplot(color = boxplot_surrounding_color, width = boxplot_width, outlier.colour = NA) +
+          stat_summary(fun.y = boxplot_symbol, geom = "point", shape = boxplot_symbol_shape, size = boxplot_symbol_size, fill = boxplot_symbol_fill) +
+          geom_jitter(data = dataset, aes(x = Group, y = Freezing),  
+                      height = jitter_height, width = jitter_width, size = jitter_size_boxplot, alpha = jitter_alpha,
+                      fill = jitter_fill_color_box, color = jitter_surrounding_color, shape = jitter_shape) +
+          labs(title = titlename, y = ylab_freezing_time) +
+          scale_y_continuous(expand = c(0, 0),limits = limits_y_bar, breaks = breaks_y) +
+          scale_x_discrete(labels = c("SED" = "SED", "LIE" = "LIE", "MOE" = "MOE", "NCS" = "NCS", "ANA-12" = "ANA-12")) +
+          scale_fill_manual(values = c(SED = colour_SED, LIE = colour_LIE, MOE = colour_MOE, NCS = colour_NCS, `ANA-12` = colour_ANA)) +
+          theme_box()
+        
+        plot(g)
+        
+        #Export to pptx or docx
+        if(Export_type == "pptx"){
+          graph2ppt(g, folder_name = paste0(folder_name, "/", Result_folder, "/", Export_name, ".pptx"), 
+                    width = save_lineplot_width, height = save_plot_height, append = TRUE)
+        }
+        else if(Export_type == "docx"){
+          graph2doc(g, folder_name = paste0(folder_name, "/", Result_folder, "/", Export_name, ".docx"), 
+                    width = save_lineplot_width, height = save_plot_height, append = TRUE)
+        }
+        
+        ggsave(filename = paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", Mono_dir, name, plot_number, ".png"), 
+                width = save_plot_width, height = save_plot_height, dpi = save_plot_dpi)
+      }
+    else if (graph == "half"){
+        #Create Plot Data set
+        sumEx <- dataset %>%
+          group_by(Group, Time) %>% 
+          summarise(mean = mean(Freezing),
+                    se = sd(Freezing)/sqrt(n()-1)) %>%
+          mutate(Group = as.factor(Group)) %>%
+          mutate(Group = relevel(Group, ref = graphic_refference))
+        
+        dataset <- dataset %>% 
+          mutate(Group = as.factor(Group)) %>%
+          mutate(Group = relevel(Group, ref = graphic_refference))
+        graphname = paste0(day, graph, "barplot")
+        
+        if(day == "Ex1"){
+          titlename = title_Ex1
+          name = paste0(title_Ex1, " ", graph, " barplot")
+        }
+        else if (day == "Ex2"){
+          titlename = title_Ex2
+          name = paste0(title_Ex2, " ", graph, " barplot")
+        }
+        
+        #Create Plot
+        g <- ggplot(sumEx, aes(x = Time, y = mean, fill = Group)) +
+          geom_bar(stat = 'identity', position = barplot_posision, width = barplot_width_half, colour = barplot_surrounding_color) +
+          geom_errorbar(aes(ymin = mean - se,
+                            ymax = mean + se),
+                        width = errobar_width, position = position_dodge(barplot_width_half))+
+          geom_jitter(data = dataset, aes(x = Time, y = Freezing, color = Group),
+                      size = jitter_size_half, alpha = jitter_alpha, fill = jitter_fill_color, shape = jitter_shape,
+                      position = position_jitterdodge(jitter.width = jitter_width_half, jitter.height = jitter_height_half)) +
+          labs(title = titlename, y = ylab_freezing_time) +
+          scale_y_continuous(expand = c(0, 0),limits = limits_y_bar, breaks = breaks_y) +
+          scale_x_discrete(limits = c(First_half, Latter_half)) +
+          scale_color_manual(values = c(SED = jitter_surrounding_color, LIE = jitter_surrounding_color, MOE = jitter_surrounding_color, NCS = jitter_surrounding_color)) +
+          scale_fill_manual(values = c(SED = colour_SED, LIE = colour_LIE, MOE = colour_MOE, NCS = colour_NCS, `ANA-12` = colour_ANA)) +
+          theme_half()
+        
+        plot(g)
+        
+        #Export to pptx or docx
+        if(Export_type == "pptx"){
+          graph2ppt(g, folder_name = paste0(folder_name, "/", Result_folder, "/", Export_name, ".pptx"), 
+                    width = save_lineplot_width, height = save_plot_height, append = TRUE)
+        }
+        else if(Export_type == "docx"){
+          graph2doc(g, folder_name = paste0(folder_name, "/", Result_folder, "/", Export_name, ".docx"), 
+                    width = save_lineplot_width, height = save_plot_height, append = TRUE)
+        }
+        #Save
+        ggsave(filename = paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", Mono_dir, name, plot_number, ".png"), 
+                width = save_plot_width, height = save_plot_height, dpi = save_plot_dpi)
+      }
+   
+    plot(g)
+    assign(paste0("G", graphname, plot_number), g, envir = .GlobalEnv)
+  }
+  
+  #My Function for Graph of Fear Conditioning----
+  fcplots <- function(fcdatasets){
+    datasets <- fcdatasets %>% 
+      mutate(color = "color")
+    
+    g <- ggplot(datasets, aes(x = Time, y = Freezing, color = color)) +
+      geom_point(size = individual_point_size) + 
+      geom_line(size = individual_line_size) +
+      labs(title = gsub("n", "", names[i])) +
+      labs(x = xlab_time, y = ylab_freezing_time) +
+      scale_y_continuous(limits = limits_y, breaks = breaks_y) +
+      scale_x_continuous(limits = limits_x_FC, breaks = breaks_x_FC) +
+      theme_FC_Individual()
+  }
+  
+  #My Function for Coloring----
+  mf_color <- function(graphlist, colour, filename, groupname){     
+    library(patchwork)
+    dir.create(paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", Mono_dir, Individual_folder), showWarnings = F)
+    dir.create(paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", Mono_dir, Individual_folder, "/Ex1"),showWarnings = F)
+    dir.create(paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", Mono_dir, Individual_folder, "/Ex2"),showWarnings = F)
+    dir.create(paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", Mono_dir, Individual_folder, "/FC"),showWarnings = F)
+    g <-  wrap_plots(graphlist) & scale_color_manual(values = c(colour))
+    
+    png(paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", Mono_dir, Individual_folder,"/",filename,"/",groupname, ".png"),
+        width = individual_plot_width*300, height = individual_plot_height*300, res = 300)
+    plot(g)
+    dev.off()
+  }
+  
+  
+  #Fear Conditioning----
+  if(experiment_type == "FC"){
+    exp <- paste0(experiment_type,"")
+    #Data retrieval----
+    namestmp <- list.files(path = path,
+                           full.names = F,
+                           pattern = paste0("\\.", file_type, "$")) %>% 
+      gsub(paste0(".",file_type), "",.)
+    names <- paste0("n", namestmp)
+    
+    paths <- list.files(path = path,
+                        full.names = T,
+                        pattern = paste0(".", file_type, "$"))
+    #Modifying Data----
+    dataset <- function(dataset){
+      name <- gsub("n", "", names[i]) %>% 
+        gsub(experiment_type, "",.)
+      slicerow <- c(3:8)
+      timerow <- c(1:6)
+      tmp <- read_excel(dataset) %>%
+        dplyr::select(5) %>%
+        dplyr::slice(slicerow) %>%
+        mutate(Interval...5 = as.numeric(Interval...5)) %>%
+        mutate(Freezing = Interval...5 * 5/3) %>%
+        dplyr::select(Freezing) %>%
+        mutate(Time = timerow) %>%
+        mutate(No = c(No = name))
+    }
+    
+    #Main Loop----
+    binddata <- data.frame()
+    for(i in 1:length(paths)){
+      binddata <- dplyr::bind_rows(binddata, assign(names[i], dataset(paths[i])))
+    }
+    #Adding the Group----
+    binddata <- binddata %>%
+      mutate(Group = if_else(str_detect(No, pattern = "SED"), "SED",
+                     if_else(str_detect(No, pattern = "LIE"), "LIE",
+                     if_else(str_detect(No, pattern = "MOE"), "MOE",
+                     if_else(str_detect(No, pattern = "ANA"), "ANA-12", "NCS")))))
+    
+    sumdata <- binddata %>%
+      spread(key = Time, val = Freezing)
+    
+    assign(str_c("sum", plot_number,sep = exp), sumdata, envir = .GlobalEnv)
+    assign(str_c("data", plot_number, sep = exp), binddata, envir = .GlobalEnv)
+    
+    write.csv(x = sumdata, file = paste0(folder_name, "/", Result_folder, "/", "Sum_", exp ,".csv"))
+    write.csv(x = binddata, file = paste0(folder_name, "/", Result_folder, "/", "Data_", exp ,".csv"))
+    
+    #For Individual Graph----
+    SEDlistFC <- list()
+    LIElistFC <- list()
+    MOElistFC <- list()
+    NCSlistFC <- list()
+    ANAlistFC <- list()
+    
+    for (i in 1:length(paths)) {
+      if(str_detect(names[i], pattern = "SED")){
+        SEDlistFC <- c(SEDlistFC, list(assign(names[i], fcplots(dataset(paths[i])))))
+        assign("SEDlistFC", SEDlistFC, envir = .GlobalEnv)
+        mf_color(graphlist = SEDlistFC, colour = colour_SED, filename = "FC", groupname = "SED")
+      }
+      else if(str_detect(names[i], pattern = "LIE")){
+        LIElistFC <- c(LIElistFC, list(assign(names[i], fcplots(dataset(paths[i])))))
+        assign("LIElistFC", LIElistFC, envir = .GlobalEnv)
+        mf_color(graphlist = LIElistFC, colour = colour_LIE, filename = "FC", groupname = "LIE")
+      }
+      else if(str_detect(names[i], pattern = "MOE")){
+        MOElistFC <- c(MOElistFC, list(assign(names[i], fcplots(dataset(paths[i])))))
+        assign("MOElistFC", MOElistFC, envir = .GlobalEnv)
+        mf_color(graphlist = MOElistFC, colour = colour_MOE, filename = "FC", groupname = "MOE")
+      }
+      else if(str_detect(names[i], pattern = "ANA")){
+        ANAlistFC <- c(ANAlistFC, list(assign(names[i], fcplots(dataset(paths[i])))))
+        assign("ANAlistFC", ANAlistFC, envir = .GlobalEnv)
+        mf_color(graphlist = ANAlistFC, colour = colour_ANA, filename = "FC", groupname = "ANA-12")
+      }
+      else if(str_detect(names[i],pattern = "NCS")){
+        NCSlistFC <- c(NCSlistFC, list(assign(names[i], fcplots(dataset(paths[i])))))
+        assign("NCSlistFC", NCSlistFC, envir = .GlobalEnv)
+        mf_color(graphlist = NCSlistFC, colour = colour_NCS, filename = "FC", groupname = "NCS")
+      }
+    }
+    
+    #Plot and Save----
+    mf_plotsave(dataset = binddata, graph = "FC", color = color)
+  }
+  
+  #Fear Extinction----
+  else if((experiment_type == "Ex1")|(experiment_type == "Ex2")){
+    patternlist <- c("", "half", "per5", "per3")
+    for (a in patternlist) {
+      exp <- paste0(experiment_type,a)
+      #Data retrieval----
+      namestmp <- list.files(path = path,
+                             full.names = F,
+                             pattern = paste0("\\.", file_type, "$")) %>% 
+        gsub(paste0(".", file_type), "",.)
+      if (str_detect(exp, pattern = "half")){
+        names <- paste0("n", namestmp, "half")
+      }
+      else if (str_detect(exp, pattern = "per5")) {
+        names <- paste0("n", namestmp, "per5")
+      } 
+      else if (str_detect(exp, pattern = "per3")) {
+        names <- paste0("n", namestmp, "per3")
+      } 
+      else {
+        names <- paste0("n", namestmp)
+      }
+      paths <- list.files(path = path,
+                          full.names = T,
+                          pattern = paste0(".", file_type, "$"))
+      #Modification of Data----
+      dataset <- function(dataset){
+        name <- gsub("n", "", names[i]) %>% 
+          gsub(exp, "",.)
+        sliceEx <- c(3:32)
+        timeEx <- rep(1:15, each = 2)
+        if ((exp == "Ex1")||(exp =="Ex2")){
+          tmp <- read_excel(dataset) %>%
+            dplyr::select(5) %>%
+            dplyr::slice(sliceEx) %>%
+            mutate(Interval...5 = as.numeric(Interval...5)) %>%
+            mutate(Freezing = Interval...5 * 10/3) %>%
+            dplyr::select(Freezing) %>%
+            mutate(Time = timeEx) %>% 
+            mutate(No = name) %>% 
+            group_by(No, Time) %>% 
+            summarise(Freezing = mean(Freezing))
+        }
+        else if (str_detect(exp, pattern = "half")){
+          T1 <- read_excel(dataset) %>% 
+            dplyr::select(5) %>% 
+            dplyr::slice(3:17) %>% 
+            mutate(Interval...5 = as.numeric(Interval...5)) %>%
+            mutate(val = Interval...5 * 10/3) %>%
+            summarise(Freezing = mean(val))
+          T2 <- read_excel(dataset) %>% 
+            dplyr::select(5) %>% 
+            dplyr::slice(18:32) %>% 
+            mutate(Interval...5 = as.numeric(Interval...5)) %>%
+            mutate(val = Interval...5 * 10/3) %>%
+            summarise(Freezing = mean(val))
+          tmp <- dplyr::bind_rows(T1,T2) %>%
+            mutate(Time = c(First_half, Latter_half)) %>% 
+            mutate(No = c(No = name))
+        }
+        else if (str_detect(exp, pattern = "per5")){
+          T1 <- read_excel(dataset) %>%
+            dplyr::select(5) %>%
+            dplyr::slice(3:12) %>% 
+            mutate(Interval...5 = as.numeric(Interval...5)) %>%
+            mutate(val = Interval...5 * 10/3) %>%
+            summarise(Freezing = mean(val))
+          
+          T2 <- read_excel(dataset) %>%
+            dplyr::select(5) %>%
+            dplyr::slice(13:22) %>% 
+            mutate(Interval...5 = as.numeric(Interval...5)) %>%
+            mutate(val = Interval...5 * 10/3) %>%
+            summarise(Freezing = mean(val))
+          
+          T3 <- read_excel(dataset) %>%
+            dplyr::select(5) %>%
+            dplyr::slice(23:32) %>% 
+            mutate(Interval...5 = as.numeric(Interval...5)) %>%
+            mutate(val = Interval...5 * 10/3) %>%
+            summarise(Freezing = mean(val))
+          
+          tmp <- dplyr::bind_rows(T1,T2,T3) %>%
+            mutate(Time = c("5", "10", "15")) %>% 
+            mutate(No = c(No = name))
+        }
+        else if (str_detect(exp, pattern = "per3")){
+          T1 <- read_excel(dataset) %>%
+            dplyr::select(5) %>%
+            dplyr::slice(3:8) %>% 
+            mutate(Interval...5 = as.numeric(Interval...5)) %>%
+            mutate(val = Interval...5 * 10/3) %>%
+            summarise(Freezing = mean(val))
+          T2 <- read_excel(dataset) %>%
+            dplyr::select(5) %>%
+            dplyr::slice(9:14) %>% 
+            mutate(Interval...5 = as.numeric(Interval...5)) %>%
+            mutate(val = Interval...5 * 10/3) %>%
+            summarise(Freezing = mean(val))
+          T3 <- read_excel(dataset) %>%
+            dplyr::select(5) %>%
+            dplyr::slice(15:20) %>% 
+            mutate(Interval...5 = as.numeric(Interval...5)) %>%
+            mutate(val = Interval...5 * 10/3) %>%
+            summarise(Freezing = mean(val))
+          T4 <- read_excel(dataset) %>%
+            dplyr::select(5) %>%
+            dplyr::slice(21:26) %>% 
+            mutate(Interval...5 = as.numeric(Interval...5)) %>%
+            mutate(val = Interval...5 * 10/3) %>%
+            summarise(Freezing = mean(val))
+          T5 <- read_excel(dataset) %>%
+            dplyr::select(5) %>%
+            dplyr::slice(27:32) %>% 
+            mutate(Interval...5 = as.numeric(Interval...5)) %>%
+            mutate(val = Interval...5 * 10/3) %>%
+            summarise(Freezing = mean(val))
+          
+          tmp <- dplyr::bind_rows(T1,T2,T3,T4,T5) %>%
+            mutate(Time = c("3","6","9","12","15")) %>% 
+            mutate(No = name)
+        }
+      }
+      datasetjitter <- function(jitter){
+        name <- gsub("n", "", names[j]) %>% 
+          gsub(exp, "",.)
+        tmpjitter <- read_excel(jitter) %>%
+          dplyr::select(5) %>%
+          dplyr::slice(3:32) %>%
+          mutate(Interval...5 = as.numeric(Interval...5)) %>%
+          mutate(Freezing = Interval...5 * 10/3) %>%
+          mutate(Freezing = as.numeric(Freezing)) %>%
+          summarise(mean = mean(Freezing)) %>%
+          mutate(No = name)
+      }
+      
+      #For Individual Graph----
+      #My Function for Individual Plot
+      plots <- function(datasets){
+        datasets <- datasets %>%
+          mutate(colour = "c")
+        graph <- ggplot(datasets, aes(x = Time, y = Freezing, color = as.factor(colour))) +
+          geom_point(size = individual_point_size) +
+          geom_line(size = individual_line_size) +
+          labs(title = gsub("n", "", names[i])) +
+          labs(x = xlab_time, y = ylab_freezing_time) +
+          scale_y_continuous(limits = limits_y, breaks = breaks_y) +
+          scale_x_continuous(limits = limits_x_Ex_individual, breaks = breaks_x_Ex_individual) +
+          theme_Ex_Individual()
+        return(graph)
+      }
+      
+      #Create Graph List
+      if (exp == "Ex1"){
+        SEDlistEx1 <- list()
+        LIElistEx1 <- list()
+        MOElistEx1 <- list()
+        NCSlistEx1 <- list()
+        ANAlistEx1 <- list()
+        day <- 1
+        
+        for (i in 1:length(paths)) {
+          if(str_detect(names[i], pattern = "SED")){
+            SEDlistEx1 <- c(SEDlistEx1, list(assign(names[i], plots(dataset(paths[i])))))
+            assign("SEDlistEx1", SEDlistEx1, envir = .GlobalEnv)
+            mf_color(graphlist = SEDlistEx1, colour = colour_SED, filename = "Ex1", groupname = "SED")
+          }
+          else if(str_detect(names[i], pattern = "LIE")){
+            LIElistEx1 <- c(LIElistEx1, list(assign(names[i], plots(dataset(paths[i])))))
+            assign("LIElistEx1", LIElistEx1, envir = .GlobalEnv)
+            mf_color(graphlist = LIElistEx1, colour = colour_LIE, filename = "Ex1", groupname = "LIE")
+          }
+          else if(str_detect(names[i], pattern = "MOE")){
+            MOElistEx1 <- c(MOElistEx1, list(assign(names[i], plots(dataset(paths[i])))))
+            assign("MOElistEx1", MOElistEx1, envir = .GlobalEnv)
+            mf_color(graphlist = MOElistEx1, colour = colour_MOE, filename = "Ex1", groupname = "MOE")
+          }
+          else if(str_detect(names[i], pattern = "ANA")){
+            ANAlistEx1 <- c(ANAlistEx1, list(assign(names[i], plots(dataset(paths[i])))))
+            assign("ANAlistEx1", ANAlistEx1, envir = .GlobalEnv)
+            mf_color(graphlist = ANAlistEx1, colour = colour_ANA, filename = "Ex1", groupname = "ANA-12")
+          }
+          else if(str_detect(names[i], pattern = "NCS")){
+            NCSlistEx1 <- c(NCSlistEx1, list(assign(names[i], plots(dataset(paths[i])))))
+            assign("NCSlistEx1", NCSlistEx1, envir = .GlobalEnv)
+            mf_color(graphlist = NCSlistEx1, colour = colour_NCS, filename = "Ex1", groupname = "NCS")
+          }
+        }
+      }
+      else if(exp == "Ex2"){
+        SEDlistEx2 <- list()
+        LIElistEx2 <- list()
+        MOElistEx2 <- list()
+        NCSlistEx2 <- list()
+        ANAlistEx2 <- list()
+        day <- 2
+        for (i in 1:length(paths)) {
+          if(str_detect(names[i], pattern = "SED")){
+            SEDlistEx2 <- c(SEDlistEx2, list(assign(names[i], plots(dataset(paths[i])))))
+            assign("SEDlistEx2", SEDlistEx2, envir = .GlobalEnv)
+            mf_color(graphlist = SEDlistEx2, colour = colour_SED, filename = "Ex2", groupname = "SED")
+          }
+          else if(str_detect(names[i], pattern = "LIE")){
+            LIElistEx2 <- c(LIElistEx2, list(assign(names[i], plots(dataset(paths[i])))))
+            assign("LIElistEx2", LIElistEx2, envir = .GlobalEnv)
+            mf_color(graphlist = LIElistEx2, colour = colour_LIE, filename = "Ex2", groupname = "LIE")
+          }
+          else if(str_detect(names[i], pattern = "MOE")){
+            MOElistEx2 <- c(MOElistEx2, list(assign(names[i], plots(dataset(paths[i])))))
+            assign("MOElistEx2", MOElistEx2, envir = .GlobalEnv)
+            mf_color(graphlist = MOElistEx2, colour = colour_MOE, filename = "Ex2", groupname = "MOE")
+          }
+          else if(str_detect(names[i], pattern = "ANA")){
+            ANAlistEx2 <- c(ANAlistEx2, list(assign(names[i], plots(dataset(paths[i])))))
+            assign("ANAlistEx2", ANAlistEx2, envir = .GlobalEnv)
+            mf_color(graphlist = ANAlistEx2, colour = colour_ANA, filename = "Ex2", groupname = "ANA")
+          }
+          else if(str_detect(names[i], pattern = "NCS")){
+            NCSlistEx2 <- c(NCSlistEx2, list(assign(names[i], plots(dataset(paths[i])))))
+            assign("NCSlistEx2", NCSlistEx2, envir = .GlobalEnv)
+            mf_color(graphlist = NCSlistEx2, colour = colour_NCS, filename = "Ex2", groupname = "NCS")
+          }
+        }
+      }
+      
+      #Main Loop----
+      binddata <- data.frame()
+      for(i in 1:length(paths)){
+        binddata <- dplyr::bind_rows(binddata, assign(names[i], dataset(paths[i])))
+      }
+      #For Jitter_plot Data
+      if((exp == "Ex1")|(exp == "Ex2")){
+        datajitter <- data.frame()
+        for (j in 1:length(paths)) {
+          datajitter <- dplyr::bind_rows(datajitter, assign(names[j], datasetjitter(paths[j])))
+        }
+        
+      }
+      #Adding the Group----
+      binddata <- binddata %>%
+        mutate(Group = if_else(str_detect(No, pattern = "SED"), "SED",
+                       if_else(str_detect(No, pattern = "LIE"), "LIE",
+                       if_else(str_detect(No, pattern = "MOE"), "MOE",
+                       if_else(str_detect(No, pattern = "ANA"), "ANA-12", "NCS")))))
+      
+      datajitter <- datajitter %>%
+        mutate(Group = if_else(str_detect(No, pattern = "SED"), "SED",
+                       if_else(str_detect(No, pattern = "LIE"), "LIE",
+                       if_else(str_detect(No, pattern = "MOE"), "MOE",
+                       if_else(str_detect(No, pattern = "ANA"), "ANA-12", "NCS")))))
+      
+      sumdata <- binddata %>% 
+        spread(key = Time, val = Freezing)
+      
+      if(str_detect(exp, pattern = "per3")){
+        sumdata <- sumdata %>% 
+          dplyr::select(1,2,5:7,3,4)
+      }
+      else if(str_detect(exp, pattern = "per5")){
+        sumdata <- sumdata %>% 
+          dplyr::select(1,2,5,3,4)
+      }   
+      
+      assign(paste0("sum", exp, plot_number), sumdata, envir = .GlobalEnv)
+      assign(paste0("data", exp, plot_number), binddata, envir = .GlobalEnv)
+      
+      write.csv(x = sumdata, file = paste0(folder_name, "/", Result_folder, "/", "Sum_", exp ,".csv"))
+      write.csv(x = binddata, file = paste0(folder_name, "/", Result_folder, "/", "Data_", exp ,".csv"))
+      
+      #Plot and Save----
+      graphlist <- c("bar", "box")
+      if((exp == "Ex1")|(exp == "Ex2")){
+        for (b in graphlist) {
+          mf_plotsave(dataset = binddata, 
+                      datajitter = datajitter, 
+                      day = experiment_type,
+                      graph = b,
+                      color = color)
+        }
+      }
+      else if (str_detect(exp, pattern = "half")){
+        mf_plotsave(dataset = binddata,
+                    day = experiment_type,
+                    graph = "half",
+                    color = color)
+        mf_plotsave(dataset = binddata,
+                    day = experiment_type,
+                    time = "half",
+                    graph = "line",
+                    color = color)
+      }
+      else {
+        times <- if_else(str_detect(exp, pattern = "per5"),"per5", "per3")
+        mf_plotsave(dataset = binddata, 
+                    day = experiment_type,
+                    time = times,
+                    graph = "line",
+                    color = color)
+      }
+    }
+  }
+}
+
+
+mf_sampling <- function(folder_name = "", dataset, sampname, color = "", filename = "",
+                             Font_family = "Times New Roman", graphic_refference = "SED", plot_number = "",
+                             errobar_width = .2, 
+                             title_size = 18, title_position = .5,
+                             axis_text_size = 16, axis_text_size_bar = 20, axis_text_half = 14, axis_title_size = 18,  axis_text_color = "black", axis_line_color = "black", 
+                             # SED = "SED", LIE = "LIE", MOE = "MOE", NCS = "NCS", 
+                             color_SED = "grey85", color_LIE = "skyblue", color_MOE = "lightgreen", color_NCS = "goldenrod", color_ANA = "steelblue",
+                             mono_SED = "white", mono_LIE = "grey85", mono_MOE = "black", mono_NCS = "black",mono_ANA = "black",
+                             jitter_fill_color = "black", jitter_fill_color_box = "white", jitter_surrounding_color = "black",
+                             jitter_shape = 21, jitter_height = 0, jitter_height_half = 0,jitter_width = .1, jitter_width_half = .2,
+                             jitter_size = 3, jitter_size_half = 2.5, jitter_size_boxplot = 2, jitter_alpha = .7, 
+                             barplot_posision = 'dodge', barplot_surrounding_color = "black",barplot_width = .7, barplot_width_half = .8,
+                             Result_folder = "Results", Plot_folder = "Plots", Mono_folder = "MONO",
+                             save_plot_width = 3, save_lineplot_width = 3.5, save_plot_height = 3, save_plot_dpi = 300 
+){
+  library(dplyr)
+  library(ggplot2)
+  library(readxl)
+  
+  dir.create(paste0(folder_name, "/", Result_folder), showWarnings = F)
+  dir.create(paste0(folder_name, "/",  Result_folder, "/", Plot_folder), showWarnings = F)
+  
+  if(color == ""){
+    colour_SED = color_SED
+    colour_LIE = color_LIE
+    colour_MOE = color_MOE
+    colour_NCS = color_NCS
+    colour_ANA = color_ANA
+    
+    Mono_dir = ""
+  }
+  else if(color == "mono"){
+    dir.create(paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", Mono_folder), showWarnings = F)
+    colour_SED = mono_SED
+    colour_LIE = mono_LIE
+    colour_MOE = mono_MOE
+    colour_NCS = mono_NCS
+    colour_ANA = mono_ANA
+  
+    filename = paste0(Mono_folder, "/")
+  }
+  
+  #Times New Roman
+  windowsFonts("TNR" = windowsFont("Times New Roman"))
+  #Meiryo
+  windowsFonts("MEI" = windowsFont("Meiryo"))
+  
+  if(Font_family == "Times New Roman"){
+    Font = "TNR"
+  }
+  else if(Font_family == "Meiryo"){
+    Font = "MEI"
+  }
+  
+  datasets <- read_excel(paste0("./", folder_name, "/",dataset))
+  assign(paste0("Sampdata", plot_number), datasets, envir = .GlobalEnv)
+  
+  if(sampname == "Soleus"){
+    sumdata <- datasets %>% 
+      dplyr::select("Group","Soleus", "Body_weight") %>%
+      mutate("Soleus" = Soleus/Body_weight * 100) %>% 
+      group_by(Group) %>% 
+      summarise(mean = mean(Soleus),
+                se = sd(Soleus)/sqrt(n()-1)) %>% 
+      mutate(Group = as.factor(Group)) %>% 
+      mutate(Group = relevel(Group, ref = graphic_refference))
+    datajitter <- datasets %>% 
+      dplyr::select("Group","Soleus",  "Body_weight") %>% 
+      mutate("Soleus" = Soleus/Body_weight * 100) %>% 
+      mutate(val = Soleus)
+    yrange <- c(0,50)
+  }
+  else if(sampname == "Plantaris"){
+    sumdata <- datasets %>% 
+      dplyr::select("Group","Plantaris", "Body_weight") %>% 
+      mutate("Plantaris" = Plantaris/Body_weight * 100) %>% 
+      group_by(Group) %>% 
+      summarise(mean = mean(Plantaris),
+                se = sd(Plantaris)/sqrt(n()-1))%>% 
+      mutate(Group = as.factor(Group)) %>% 
+      mutate(Group = relevel(Group, ref = graphic_refference))
+    datajitter <- datasets %>% 
+      dplyr::select("Group","Plantaris", "Body_weight") %>% 
+      mutate("Plantaris" = Plantaris/Body_weight * 100) %>%  
+      mutate(val = Plantaris)
+    yrange <- c(0,125)
+  }
+  else if(sampname == "Adrenal"){
+    sumdata <- datasets %>% 
+      dplyr::select("Group","Adrenal", "Body_weight") %>% 
+      mutate("Adrenal" = Adrenal/Body_weight * 100) %>% 
+      group_by(Group) %>% 
+      summarise(mean = mean(Adrenal),
+                se = sd(Adrenal)/sqrt(n()-1))%>% 
+      mutate(Group = as.factor(Group)) %>% 
+      mutate(Group = relevel(Group, ref = graphic_refference))
+    datajitter <- datasets %>% 
+      dplyr::select("Group","Adrenal", "Body_weight") %>% 
+      mutate("Adrenal" = Adrenal/Body_weight * 100) %>% 
+      mutate(val = Adrenal)
+    yrange <- c(0,20)
+  }
+  else if(sampname == "Thymus"){
+    sumdata <- datasets %>% 
+      dplyr::select("Group","Thymus", "Body_weight") %>% 
+      mutate("Thymus" = Thymus/Body_weight * 100) %>% 
+      group_by(Group) %>% 
+      summarise(mean = mean(Thymus),
+                se = sd(Thymus)/sqrt(n()-1))%>% 
+      mutate(Group = as.factor(Group)) %>% 
+      mutate(Group = relevel(Group, ref = graphic_refference))
+    datajitter <- datasets %>% 
+      dplyr::select("Group","Thymus", "Body_weight") %>% 
+      mutate("Thymus" = Thymus/Body_weight * 100) %>% 
+      mutate(val = Thymus)
+    yrange <- c(0,120)
+  }
+  else if(sampname == "Glucose"){
+    sumdata <- datasets %>% 
+      dplyr::select("Group","Glucose") %>% 
+      group_by(Group) %>% 
+      summarise(mean = mean(Glucose),
+                se = sd(Glucose)/sqrt(n()-1))%>% 
+      mutate(Group = as.factor(Group)) %>% 
+      mutate(Group = relevel(Group, ref = graphic_refference))
+    datajitter <- datasets %>% 
+      dplyr::select("Group","Glucose") %>% 
+      mutate(val = Glucose)
+    yrange <- c(0,6)
+  }
+  else if(sampname == "Lactate"){
+    sumdata <- datasets %>% 
+      dplyr::select("Group","Lactate") %>% 
+      group_by(Group) %>% 
+      summarise(mean = mean(Lactate),
+                se = sd(Lactate)/sqrt(n()-1))%>% 
+      mutate(Group = as.factor(Group)) %>% 
+      mutate(Group = relevel(Group, ref = graphic_refference))
+    datajitter <- datasets %>% 
+      dplyr::select("Group","Lactate") %>% 
+      mutate(val = Lactate)
+    yrange <- c(0,2.5)
+  }
+  
+  if((sampname == "Glucose")|(sampname == "Lactate")){
+    ylab = "mM"
+  }
+  else{
+    ylab = "mg/100g"
+  }
+  
+  g <- ggplot(sumdata, aes(x = Group, y = mean, fill = Group, group = Group)) +
+    geom_bar(stat = 'identity', position = barplot_posision, width = barplot_width, colour = barplot_surrounding_color) +
+    geom_errorbar(aes(ymin = mean - se,
+                      ymax = mean + se),
+                  width = errobar_width)+
+    geom_jitter(data = datajitter, aes(x = Group, y = val),
+                height = jitter_height, width = jitter_width, size = jitter_size, alpha = jitter_alpha,
+                fill = jitter_fill_color, color = jitter_surrounding_color, shape = jitter_shape) +
+    labs(title = sampname, y = ylab) +
+    scale_y_continuous(expand = c(0, 0), limits = yrange) +
+    scale_x_discrete(labels = c("SED" = "SED", "LIE" = "LIE", "MOE" = "MOE", "NCS" = "NCS", "ANA" = "ANA-12")) +
+    scale_fill_manual(values = c(SED = colour_SED, LIE = colour_LIE, NCS = colour_NCS, 
+                                 MOE = colour_MOE, Vehicle = colour_SED, `ANA-12` = colour_ANA)) +
+    theme_classic(base_family = Font) +
+    theme(plot.title = element_text(size = title_size, hjust = title_position),
+          legend.position = "none",
+          axis.text.x = element_text(size = axis_text_size_bar, colour = axis_text_color),
+          axis.text.y = element_text(size = axis_text_size, colour = axis_text_color),
+          axis.line = element_line(colour = axis_line_color),
+          axis.title.y = element_text(size = axis_title_size),
+          axis.title.x = element_blank())
+  
+  plot(g)
+  ggsave(filename = paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", filename, sampname, plot_number, ".png"), 
+         width = save_plot_width, height = save_plot_height, dpi = save_plot_dpi)
+  
+  assign(paste0("g",sampname, color, plot_number), g, envir = .GlobalEnv)
+}
+
+mf_FC_annotation <- function(folder_name = "", graph, y_first_arrow, y_second_arrow, y_third_arrow3, 
+                                  arrow_line_length = 20, arrow_length = .4, arrow_size = 1.5,
+                                  legend_posision_x = 1.2, legend_posision_y, 
+                                  legend_arrow_size = 1, legend_arrow_line_length = 10, legend_arrow_length = .3, 
+                                  legend_text_posision = 2.4,
+                                  legend_text_size = 5, legend_text_label = ": Foot shock",
+                                  Font_family = "Times New Roman",
+                                  filename = "",
+                                  color = "", arrow_color = "red", arrow_color_mono = "black", plot_number = "",
+                                  Result_folder = "Results", Plot_folder = "Plots", Mono_folder = "MONO",
+                                  plot_width = 3.5, plot_height = 3, plot_dpi = 300)
+{
+  dir.create(paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/"), showWarnings = F)
+  
+  #Times New Roman
+  windowsFonts("TNR" = windowsFont("Times New Roman"))
+  #Meiryo
+  windowsFonts("MEI" = windowsFont("Meiryo"))
+  
+  if(Font_family == "Times New Roman"){
+    Font <- "TNR"
+  }
+  else if(Font_family == "Meiryo"){
+    Font <- "MEI"
+  }
+  
+  if(color == "mono"){
+    colour = arrow_color_mono
+    filename = paste0(Mono_folder, "/")
+    
+  }
+  else{
+    colour = arrow_color
+  }
+  g <- graph +
+    annotate("segment", x = 3, xend = 3, 
+             y = y_first_arrow + arrow_line_length, yend = y_first_arrow, 
+             color = colour, size = arrow_size, 
+             arrow = arrow(length = unit(arrow_length, "cm"))) +
+    annotate("segment", x = 4, xend = 4, 
+             y = y_second_arrow + arrow_line_length, yend = y_second_arrow, 
+             color = colour, size = arrow_size, 
+             arrow = arrow(length = unit(arrow_length, "cm"))) +
+    annotate("segment", x = 5, xend = 5, 
+             y = y_third_arrow3 + arrow_line_length, yend = y_third_arrow3, 
+             color = colour, size = arrow_size, 
+             arrow = arrow(length = unit(arrow_length, "cm"))) +
+    annotate("segment", x = legend_posision_x, xend = legend_posision_x, 
+             y = legend_posision_y, 
+             yend = legend_posision_y-legend_arrow_line_length, color = colour, size = legend_arrow_size,
+             arrow = arrow(length = unit(legend_arrow_length, "cm"))) +
+    annotate("text", x = legend_text_posision, y = legend_posision_y - (legend_arrow_line_length/2), 
+             label = legend_text_label, family = Font, size = legend_text_size)
+  
+  assign(paste0("ano_gFC", plot_number), g, envir = .GlobalEnv)
+  
+  plot(g)
+  ggsave(filename = paste0(folder_name, "/", Result_folder, "/", Plot_folder, "/", filename, "Fear Conditioning", color, plot_number, ".png"), 
+         width = plot_width, height = plot_height, dpi = plot_dpi)
+}
+
+# Create name lists
+TimeFC <- c("1","2","3","4","5","6")
+Timeper3 <- c("3","6","9","12","15")
+Timeper5 <- c("5","10","15")
+Timeper7.5 <- c("7.5", "15")
+explist <- c("FC", "Ex1", "Ex2")
