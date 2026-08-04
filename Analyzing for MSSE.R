@@ -1547,7 +1547,7 @@ setwd("Experimental_Raw_data")
                               values = c(SED = "white", `ANA-12` = "black"))
           modsupGFC
           
-          mf_FC_annotation_ver3(folder_name = "ANAsedentary", graph = modsupGFC, 
+          mf_FC_annotation(folder_name = "ANAsedentary", graph = modsupGFC, 
                                 y_first_arrow = 20, y_second_arrow = 40, y_third_arrow3 = 70, 
                                 legend_posision_y = 75, plot_number = "_MONO", color = "mono", 
                                 plot_width = 3.75, plot_height = 3.25) 
