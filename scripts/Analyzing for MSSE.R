@@ -52,7 +52,8 @@ source("scripts/MyFunctions.txt")
       annotate("text", x = 5.25, y = 10, label = ": Foot shock", size = 5.5, family = "TNR")
     
     gFC
-    tiff(filename = "Results/Contextual_Fear_Conditioning.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
+    dir.create("Results/Plots", showWarnings = F)
+    tiff(filename = "Results/Plots/Contextual_Fear_Conditioning.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
     gFC
     dev.off()
     
@@ -115,7 +116,7 @@ source("scripts/MyFunctions.txt")
         annotate("text", x = 5, y = 19, label = "$", size = 4) +
         annotate("text", x = 5, y = 10, label = "#", size = 4)
       gEx1per3
-      tiff(filename = "Results/Contextual_Extinction_Day1_per3min.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
+      tiff(filename = "Results/Plots/Contextual_Extinction_Day1_per3min.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
       gEx1per3
       dev.off()
 
@@ -131,7 +132,7 @@ source("scripts/MyFunctions.txt")
         theme(axis.line.y = element_blank())
       
       gEx1box
-      tiff(filename = "Results/Contectual_Extinction_Day1_box.tiff", width = 4 * 900, height = 4 * 900, res = 900)
+      tiff(filename = "Results/Plots/Contectual_Extinction_Day1_box.tiff", width = 4 * 900, height = 4 * 900, res = 900)
       gEx1box
       dev.off()
 
@@ -192,7 +193,7 @@ source("scripts/MyFunctions.txt")
         annotate("text", x = 3, y = 12, label = "#", size = 4)
       gEx2per3
       
-      tiff(filename = "Results/Contextual_Extinction_Day2_per3.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
+      tiff(filename = "Results/Plots/Contextual_Extinction_Day2_per3.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
       gEx2per3
       dev.off()
       
@@ -209,7 +210,7 @@ source("scripts/MyFunctions.txt")
         theme(axis.line.y = element_blank())
       gEx2box
       
-      tiff(filename = "Results/Contextual_Fear_Extinction_Day2_box.tiff", width = 4 * 900, height = 4 * 900, res = 900)
+      tiff(filename = "Results/Plots/Contextual_Fear_Extinction_Day2_box.tiff", width = 4 * 900, height = 4 * 900, res = 900)
       gEx2box
       dev.off()
       
@@ -243,7 +244,7 @@ source("scripts/MyFunctions.txt")
     # Line plot ----
       mf_plotcue(data = cueFc, day = "FC", color = "mono")
       
-      tiff(filename = "Results/Auditory_Fear_Conditioning.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
+      tiff(filename = "Results/Plots/Auditory_Fear_Conditioning.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
       GcueFCcue
       dev.off()
       
@@ -298,7 +299,7 @@ source("scripts/MyFunctions.txt")
           scale_y_continuous(expand = c(0, 0), limits = c(0,105), breaks = seq(0,100, by = 20))
         modGcueEx1per3
         
-        tiff(filename = "Results/Auditory_Extinction_Day1_per3tone.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
+        tiff(filename = "Results/Plots/Auditory_Extinction_Day1_per3tone.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
         modGcueEx1per3
         dev.off()
         
@@ -311,7 +312,7 @@ source("scripts/MyFunctions.txt")
           scale_y_continuous(expand = c(0, 0), limits = c(0,105), breaks = seq(0,100, by = 20))
         modGcueEx1
         
-        tiff(filename = "Results/Auditory_Extinction_Day1_boxplot.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
+        tiff(filename = "Results/Plots/Auditory_Extinction_Day1_boxplot.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
         modGcueEx1
         dev.off()
         
@@ -364,7 +365,7 @@ source("scripts/MyFunctions.txt")
           scale_y_continuous(expand = c(0, 0), limits = c(0,105), breaks = seq(0,100, by = 20))
         modGcueEx2per3
         
-        tiff(filename = "Results/Auditory_Extinction_Day2_per3tone.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
+        tiff(filename = "Results/Plots/Auditory_Extinction_Day2_per3tone.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
         modGcueEx2per3
         dev.off()
         
@@ -377,7 +378,7 @@ source("scripts/MyFunctions.txt")
           scale_y_continuous(expand = c(0, 0), limits = c(0,105), breaks = seq(0,100, by = 20))
         modGcueEx2
         
-        tiff(filename = "Results/Auditory_Extinction_Day2_boxplot.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
+        tiff(filename = "Results/Plots/Auditory_Extinction_Day2_boxplot.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
         modGcueEx2
         dev.off()
         
@@ -397,7 +398,7 @@ source("scripts/MyFunctions.txt")
           tidyr::spread(key = Time, value = Freezing) %>% 
           dplyr::arrange(No)
         
-        sink(file = "ANA_Fear_Conditioning_Analysis.txt", split = T)
+        sink(file = "Results/ANA_Contextual_Fear_Conditioning_Analysis.txt", split = T)
         anovakun(dataset = sumANAFC[-2],
                  design = "AsB",
                  Group = c("SED_Sal", "LIE_Sal", "LIE_ANA"),
@@ -420,7 +421,7 @@ source("scripts/MyFunctions.txt")
           annotate("text", x = 5.3, y = 8, label = ": Foot shock", size = 4.5, family = "TNR")
         modGANAFC
         
-        tiff(filename = "Results/ANA_Contextual_Fear_Conditioning.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
+        tiff(filename = "Results/Plots/ANA_Contextual_Fear_Conditioning.tiff", width = 4 * 900, height = 3.5 * 900, res = 900)
         modGANAFC
         dev.off()
         
@@ -433,7 +434,7 @@ source("scripts/MyFunctions.txt")
                                               "MIE...Sal" = "LIE_Sal", 
                                               "MIE...ANA" = "LIE_ANA"))
         
-        ANAEx1per3 <- read.csv(".\\Datasets\\ANA_Ex1_1min.csv") %>% 
+        ANAEx1per3 <- read.csv("ANA_Ex1_1min.csv") %>% 
           gather(key = Group, val = Freezing, -1) %>% 
           mutate(row = row_number()) %>% 
           mutate(Group = if_else(row <= 105, "SED_Sal", if_else(row <= 210, "LIE_Sal", "LIE_ANA"))) %>% 
@@ -487,7 +488,7 @@ source("scripts/MyFunctions.txt")
           theme(axis.line.y = element_blank())
         modGANAEx1box    
         
-        tiff(filename = "Results/ANA_Contectual_Extinction_Day1_box.tiff", 
+        tiff(filename = "Results/Plots/ANA_Contectual_Extinction_Day1_box.tiff", 
              width = 4 * 900, height = 4 * 900, res = 900)
         modGANAEx1box
         dev.off()
@@ -500,7 +501,7 @@ source("scripts/MyFunctions.txt")
                                        "MIE...Sal" = "LIE_Sal", 
                                        "MIE...ANA" = "LIE_ANA"))
         
-        ANAEx2per3 <- read.csv(".\\Datasets\\ANA_Ex2_1min.csv") %>% 
+        ANAEx2per3 <- read.csv("ANA_Ex2_1min.csv") %>% 
           gather(key = Group, val = Freezing, -1) %>% 
           mutate(row = row_number()) %>% 
           mutate(Group = if_else(row <= 105, "SED_Sal", if_else(row <= 210, "LIE_Sal", "LIE_ANA"))) %>% 
@@ -517,7 +518,7 @@ source("scripts/MyFunctions.txt")
           spread(key = Time, val = Freezing,-1) %>%
           arrange(No)
         
-        sink(file = "ANA_Contextual_Fear_Extinction_day2_Analysis.txt", split = T)
+        sink(file = "Results/ANA_Contextual_Fear_Extinction_day2_Analysis.txt", split = T)
         
         cat("\n== For Lineplot ==\n")
         cat("\n== ANOVA ==\n")
@@ -551,7 +552,7 @@ source("scripts/MyFunctions.txt")
           theme(axis.line.y = element_blank())
         modGANAEx2box
         
-        tiff(filename = "Results/ANA_Contectual_Extinction_Day2_box.tiff", 
+        tiff(filename = "Results/Plots/ANA_Contectual_Extinction_Day2_box.tiff", 
              width = 4 * 900, height = 4 * 900, res = 900)
         modGANAEx2box
         dev.off()
@@ -621,13 +622,13 @@ source("scripts/MyFunctions.txt")
         
         modGANABDNF <- GBDNFANA +
           scale_y_continuous(expand = c(0, 0), limits = c(0,250)) +
-          annotate("path", x = c(1,1,1.9,1.9), y = c(200, 240, 240, 220)) +
-          annotate("text", x = 1.45, y = 242, label = "*", size = 10) +
-          annotate("path", x = c(2.1,2.1,3,3), y = c(220, 240, 240, 220)) +
-          annotate("text", x = 2.55, y = 242, label = "*", size = 10)
+          annotate("path", x = c(1,1,1.9,1.9), y = c(190, 230, 230, 210)) +
+          annotate("text", x = 1.45, y = 234, label = "*", size = 10) +
+          annotate("path", x = c(2.1,2.1,3,3), y = c(210, 230, 230, 210)) +
+          annotate("text", x = 2.55, y = 234, label = "*", size = 10)
         modGANABDNF
         
-        tiff(filename = "Results/ANA_BDNF_box.tiff", 
+        tiff(filename = "Results/Plots/ANA_BDNF_box.tiff", 
              width = 4 * 900, height = 4 * 900, res = 900)
         modGANABDNF
         dev.off()
@@ -639,13 +640,13 @@ source("scripts/MyFunctions.txt")
         
         modGANATrkB <- GTrkBANA +
           scale_y_continuous(expand = c(0, 0), limits = c(0,250)) +
-          annotate("path", x = c(1,1,1.9,1.9), y = c(200, 240, 240, 220)) +
-          annotate("text", x = 1.45, y = 242, label = "*", size = 10) +
-          annotate("path", x = c(2.1,2.1,3,3), y = c(220, 240, 240, 220)) +
-          annotate("text", x = 2.55, y = 242, label = "*", size = 10)
+          annotate("path", x = c(1,1,1.9,1.9), y = c(190, 230, 230, 210)) +
+          annotate("text", x = 1.45, y = 234, label = "*", size = 10) +
+          annotate("path", x = c(2.1,2.1,3,3), y = c(210, 230, 230, 190)) +
+          annotate("text", x = 2.55, y = 234, label = "*", size = 10)
         modGANATrkB
         
-        tiff(filename = "Results/ANA_TrkB_box.tiff", 
+        tiff(filename = "Results/Plots/ANA_TrkB_box.tiff", 
              width = 4 * 900, height = 4 * 900, res = 900)
         modGANATrkB
         dev.off()
@@ -659,7 +660,7 @@ source("scripts/MyFunctions.txt")
           scale_y_continuous(expand = c(0, 0), limits = c(0,250))
         modGANApCREB
         
-        tiff(filename = "Results/ANA_pCREB_box.tiff", 
+        tiff(filename = "Results/Plots/ANA_pCREB_box.tiff", 
              width = 4 * 900, height = 4 * 900, res = 900)
         modGANApCREB
         dev.off()
@@ -667,21 +668,24 @@ source("scripts/MyFunctions.txt")
 # Supplemental Experiment =============================================================================
   # Contextual Fear Conditioning ----
     # Create data sets & Plots ----
-          mf_autograph(folder_name = "ANAsedentary", experiment_type = "FC", 
-                        path = "./ANAsedentary/FC", color = "mono")
-          
-          modsupGFC <- GFC + 
+          mf_autograph(folder_name = "Supplemental", experiment_type = "FC", 
+                        path = "./Supplemental/FC", color = "mono", 
+                       plot_number = "SM", legend_position_FC = c(.35, .8))
+        
+          modsupGFC <- GFCSM + 
             scale_fill_manual(labels = c("SED" = "SED + Vehicle", "ANA-12" = "SED + ANA-12"),
                               values = c(SED = "white", `ANA-12` = "black"))
           modsupGFC
           
-          mf_FC_annotation(folder_name = "ANAsedentary", graph = modsupGFC, 
-                                y_first_arrow = 20, y_second_arrow = 40, y_third_arrow3 = 70, 
-                                legend_posision_y = 75, plot_number = "_MONO", color = "mono", 
-                                plot_width = 3.75, plot_height = 3.25) 
+          mf_FC_annotation(folder_name = "Supplemental", graph = modsupGFC, 
+                           y_first_arrow = 20, y_second_arrow = 40, y_third_arrow3 = 70, 
+                           legend_posision_y = 10, legend_posision_x = 4.2,
+                           plot_number = "_MONO", color = "mono", 
+                           plot_width = 3.75, plot_height = 3.25, 
+                           legend_text_posision = 5.3) 
           
     # Statistical Analysis ----
-          sink(file = "Results/Supplemental_Contextual_Fear_Conditioning_Analysis.txt", split = T)
+          sink(file = "Supplemental/Results/Supplemental_Contextual_Fear_Conditioning_Analysis.txt", split = T)
           anovakun(dataset = sumFC[-1], "AsB",
                    Group = c("SED + ANA-12", "SED + Vehicle"),
                    Time = TimeFC,
@@ -692,14 +696,15 @@ source("scripts/MyFunctions.txt")
   # Contextual Fear Extinction ----
     # Extinction day 1 ----
       # Create data sets & Plots ----
-          mf_autograph(folder_name = "ANAsedentary", experiment_type = "Ex1", 
-                           path = "./ANAsedentary/Ex1", legend_position_Ex = "none",
+          mf_autograph(folder_name = "Supplemental", experiment_type = "Ex1", 
+                           path = "./Supplemental/Ex1", legend_position_Ex = "none",
                            color = "mono", jitter_fill_color = "white", 
                            axis_text_size = 20, axis_title_size = 20,
                            save_lineplot_width = 3.75, save_plot_height = 3.25,
-                           save_plot_width = 3.25)
+                           save_plot_width = 3.25,
+                           plot_number = "SM")
           
-          modsupGEx1box <- GEx1box +
+          modsupGEx1box <- GEx1boxSM +
             scale_x_discrete(labels = c("SED" = "SED\nVehicle", "ANA-12" = "SED\nANA-12")) +
             scale_fill_manual(values = c(SED = "white", `ANA-12` = "grey30")) +
             scale_y_continuous(expand = c(0, 0), limits = c(0, 105), breaks = seq(0,100, by = 20)) +
@@ -708,17 +713,17 @@ source("scripts/MyFunctions.txt")
             annotate("segment", x = .4, xend = .4, y = 0, yend = 100.3, size = 1)
           modsupGEx1box
           
-          tiff(filename = "Results/Supplement_Contectual_Extinction_Day1_box.tiff", width = 4 * 900, height = 4 * 900, res = 900)
+          tiff(filename = "Supplemental/Results/Plots/MONO/Supplement_Contectual_Extinction_Day1_box.tiff", width = 4 * 900, height = 4 * 900, res = 900)
           modsupGEx1box
           dev.off()
           
       # Statistical Analysis ----
-          supsumEx1 <- dataEx1 %>% 
+          supsumEx1 <- dataEx1SM %>% 
             group_by(No,Group) %>% 
             summarise(Freezing = mean(Freezing))
           
-          sink(file = "Results/Supplemental_Contextual_Fear_Extinction_Day1_Analysis.txt", split = T)
-          anovakun(dataset = sumEx1per3[-1], "AsB",
+          sink(file = "Supplemental/Results/Supplemental_Contextual_Fear_Extinction_Day1_Analysis.txt", split = T)
+          anovakun(dataset = sumEx1per3SM[-1], "AsB",
                    Group = c("SED + ANA-12", "SED + Vehicle"),
                    Time = Timeper3,
                    hf = T,
@@ -742,13 +747,15 @@ source("scripts/MyFunctions.txt")
 
     # Extinction day 2 ----
       # Create data sets & Plots ----
-          mf_autograph(folder_name = "ANAsedentary", experiment_type = "Ex2", 
-                           path = "./ANAsedentary/Ex2", legend_position_Ex = "none",
+          mf_autograph(folder_name = "Supplemental", experiment_type = "Ex2", 
+                           path = "./Supplemental/Ex2", legend_position_Ex = "none",
                            color = "mono", jitter_fill_color = "white",
                            axis_text_size = 20, axis_title_size = 20,
                            save_lineplot_width = 3.75, save_plot_height = 3.25,
-                           save_plot_width = 3.25)
-          modsupGEx2box <- GEx2box +
+                           save_plot_width = 3.25,
+                           plot_number = "SM")
+          
+          modsupGEx2box <- GEx2boxSM +
             scale_x_discrete(labels = c("SED" = "SED\nVehicle", "ANA-12" = "SED\nANA-12")) +
             scale_fill_manual(values = c(SED = "white", `ANA-12` = "grey30")) +
             scale_y_continuous(expand = c(0, 0), limits = c(0, 105), breaks = seq(0, 100, by = 20)) +
@@ -757,17 +764,17 @@ source("scripts/MyFunctions.txt")
             annotate("segment", x = .4, xend = .4, y = 0, yend = 100.3, size = 1)
           modsupGEx2box
           
-          tiff(filename = "Results/Supplement_Contectual_Extinction_Day2_box.tiff", width = 4 * 900, height = 4 * 900, res = 900)
+          tiff(filename = "Supplemental/Results/Plots/MONO/Supplement_Contectual_Extinction_Day2_box.tiff", width = 4 * 900, height = 4 * 900, res = 900)
           modsupGEx2box
           dev.off()
           
       # Statistical Analysis ----
-          supsumEx2 <- dataEx2 %>% 
+          supsumEx2 <- dataEx2SM %>% 
             group_by(No,Group) %>% 
             summarise(Freezing = mean(Freezing))
           
-          sink(file = "Results/Supplemental_Contextual_Fear_Extinction_Day2_Analysis.txt", split = T)
-          anovakun(dataset = sumEx2per3[-1], "AsB",
+          sink(file = "Supplemental/Results/Supplemental_Contextual_Fear_Extinction_Day2_Analysis.txt", split = T)
+          anovakun(dataset = sumEx2per3SM[-1], "AsB",
                    Group = c("SED + ANA-12", "SED + Vehicle"),
                    Time = Timeper3,
                    peta = T)
