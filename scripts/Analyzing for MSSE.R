@@ -678,11 +678,11 @@ source("scripts/MyFunctions.txt")
           modsupGFC
           
           mf_FC_annotation(folder_name = "Supplemental", graph = modsupGFC, 
-                           y_first_arrow = 20, y_second_arrow = 40, y_third_arrow3 = 70, 
-                           legend_posision_y = 10, legend_posision_x = 4.2,
+                           y_first_arrow = 20, y_second_arrow = 40, y_third_arrow = 70, 
+                           legend_position_y = 10, legend_position_x = 4.2,
                            plot_number = "_MONO", color = "mono", 
                            plot_width = 3.75, plot_height = 3.25, 
-                           legend_text_posision = 5.3) 
+                           legend_text_position = 5.3) 
           
     # Statistical Analysis ----
           sink(file = "Supplemental/Results/Supplemental_Contextual_Fear_Conditioning_Analysis.txt", split = T)
