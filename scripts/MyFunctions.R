@@ -19,7 +19,7 @@ mf_plotANA <- function(dataset, datajitter = NA, day, time = "per1", graph, colo
     sumFC <- dataset %>%
       group_by(Group, Time) %>%
       summarise(mean = mean(Freezing),
-                se = sd(Freezing)/sqrt(n()-1)) %>%
+                se = sd(Freezing)/sqrt(n())) %>%
       mutate(Group = as.factor(Group)) %>%
       mutate(Group = relevel(Group, ref = "LIE_Sal")) %>%
       mutate(Group = relevel(Group, ref = "SED_Sal"))
@@ -50,7 +50,7 @@ mf_plotANA <- function(dataset, datajitter = NA, day, time = "per1", graph, colo
     sumExb <- dataset %>% 
       group_by(Group) %>% 
       summarise(mean = mean(Freezing),
-                se = sd(Freezing)/sqrt(n()-1)) %>%
+                se = sd(Freezing)/sqrt(n())) %>%
       mutate(Group = as.factor(Group)) %>%
       mutate(Group = relevel(Group, ref = "LIE_Sal")) %>% 
       mutate(Group = relevel(Group, ref = "SED_Sal"))
@@ -93,7 +93,7 @@ mf_plotANA <- function(dataset, datajitter = NA, day, time = "per1", graph, colo
     sumEx <- dataset %>%
       group_by(Group, Time) %>% 
       summarise(mean = mean(Freezing),
-                se = sd(Freezing)/sqrt(n()-1)) %>%
+                se = sd(Freezing)/sqrt(n())) %>%
       mutate(Group = as.factor(Group)) %>%
       mutate(Group = relevel(Group, ref = "LIE_Sal")) %>%
       mutate(Group = relevel(Group, ref = "SED_Sal"))
@@ -214,7 +214,7 @@ mf_plotcue <- function(data, datajitter = NA, day, per = "per", graph = "line", 
     sumdata <- data %>% 
       group_by(Group, Tone) %>% 
       summarise(mean = mean(Freezing),
-                se = sd(Freezing)/sqrt(n()-1)) %>% 
+                se = sd(Freezing)/sqrt(n())) %>% 
       mutate(Group = as.factor(Group)) %>% 
       mutate(Group = relevel(Group, ref = "LIE")) %>% 
       mutate(Group = relevel(Group, ref = "SED"))
@@ -299,7 +299,7 @@ mf_plotcue <- function(data, datajitter = NA, day, per = "per", graph = "line", 
     sumExb <- data %>% 
       group_by(Group) %>% 
       summarise(mean = mean(Freezing),
-                se = sd(Freezing)/sqrt(n()-1)) %>%
+                se = sd(Freezing)/sqrt(n())) %>%
       mutate(Group = as.factor(Group)) %>%
       mutate(Group = relevel(Group, ref = "LIE")) %>% 
       mutate(Group = relevel(Group, ref = "SED"))
@@ -376,7 +376,7 @@ mf_smpplot <- function(dataset, datajit, titlename, design,
   sumdata <- dataset %>% 
     group_by(Group) %>% 
     summarise(mean = mean(val),
-              se = sd(val)/sqrt(n()-1)) %>% 
+              se = sd(val)/sqrt(n())) %>% 
     mutate(Group = as.factor(Group))
   dataset <- dataset %>% 
     mutate(Group = as.factor(Group))
@@ -684,7 +684,7 @@ mf_plotsave <- function(dataset, datajitter = NA, day, time = "per1", graph, col
     sumFC <- dataset %>%
       group_by(Group, Time) %>%
       summarise(meanFreezing = mean(Freezing), 
-                seFreezing = sd(Freezing)/sqrt(n()-1)) %>%
+                seFreezing = sd(Freezing)/sqrt(n())) %>%
       mutate(Group = as.factor(Group)) %>%
       mutate(Group = relevel(Group, ref = "SED"))
     
@@ -716,7 +716,7 @@ mf_plotsave <- function(dataset, datajitter = NA, day, time = "per1", graph, col
     sumExb <- dataset %>% 
       group_by(Group) %>% 
       summarise(mean = mean(Freezing),
-                se = sd(Freezing)/sqrt(n()-1)) %>%
+                se = sd(Freezing)/sqrt(n())) %>%
       mutate(Group = as.factor(Group)) %>%
       mutate(Group = relevel(Group, ref = "SED"))
     if(day == 1){
@@ -757,7 +757,7 @@ mf_plotsave <- function(dataset, datajitter = NA, day, time = "per1", graph, col
     sumEx <- dataset %>%
       group_by(Group, Time) %>% 
       summarise(mean = mean(Freezing),
-                se = sd(Freezing)/sqrt(n()-1)) %>%
+                se = sd(Freezing)/sqrt(n())) %>%
       mutate(Group = as.factor(Group)) %>%
       mutate(Group = relevel(Group, ref = "SED"))
     xlabel = "Time (min)"
