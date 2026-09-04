@@ -54,4 +54,4 @@ install.packages(c("dplyr", "ggplot2", "tidyr", "stringr", "psych", "readxl", "e
 For any questions regarding the paper, data analysis, or to report a bug, please open an Issue in this repository or contact:
 
 - Contact Person: [Ryo Shimoda (ORCID)](https://orcid.org/0000-0002-9123-0703)
-- Email: shimoda.ryo.su@alumni.tsukuba.ac.jp
+- Email: `shimoda.ryo.su@alumni.tsukuba.ac.jp`
