@@ -1,3 +1,10 @@
+## 概要
+このリポジトリには、国際学術誌Medicine & Science in Sports & Exerciseに掲載された論文のデータ分析コードと結果が格納されています。4週間の低強度運動が恐怖記憶の消去学習を促進するメカニズムに、海馬の脳由来神経栄養因子（BDNF）が関与していることを示唆しています。心的外傷後ストレス障害（PTSD）への運動療法の可能性や、そのメカニズム解明に迫った研究です。実験データは等分散性の検定（Levene検定）や球面性検定（Mendoza）を行った後、繰り返しのある二元配置分散分析や繰り返しのない一元配置分散分析を行い、Shafferの方法を用いて事後検定を行いました。
+
+- 研究概要  
+まず、ラットに電気ショックによる恐怖条件付けを行い、恐怖記憶（トラウマ記憶）を学習させます。その後、安静群、低強度運動群、中強度運動群に分け、４週間の運動、あるいは安静を実施したのち、恐怖記憶の消去学習（恐怖症状を緩和していく実験、PTSDの治療に用いられる暴露療法に類似）を実施すると、安静群に対し、両運動群で消去学習が促進され、恐怖症状が緩和しました。実験を低強度運動群に絞り、BDNF拮抗薬を用いてBDNFの作用を阻害すると、低強度運動の効果が消失したことから、４週間の低強度運動による消去学習促進効果にはBDNFが作用していることが明らかとなりました。
+
+
 ## Accelerated Fear Extinction by Regular Light-Intensity Exercise: A Possible Role of Hippocampal BDNF-TrkB Signaling
 
 This repository contains the R code and related materials for the data analysis presented in the following paper:
